@@ -36,38 +36,70 @@ def main():
 #------------------------实时绘制------------------------# 
     game_over = False
     score=0
+    delay=1000
+    snake=Snake(screen)
+    food=Food()
 
     while(True):
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
+            elif event.type == KEYDOWN:
+                if event.key in (K_w, K_UP):
+                    snake.move_up()
+                elif event.key in (K_s, K_DOWN):
+                    snake.move_down()
+                elif event.key in (K_a, K_LEFT):
+                    snake.move_left()
+                elif event.key in (K_d, K_RIGHT):
+                    snake.move_right()
+                elif(game_over and event.key==K_r):
+                    
+                    screen.fill(game_config['bg_color'])
+                    for x in range(GRID_SIZE, WINDOW_SIZE[0],GRID_SIZE):
+                        pygame.draw.line(screen, GRID_COLOR, (x, 2 * GRID_SIZE), (x, WINDOW_SIZE[1]), LINE_WIDTH)
+                    for y in range(2*GRID_SIZE, WINDOW_SIZE[1], GRID_SIZE):
+                        pygame.draw.line(screen, GRID_COLOR, (0, y), (WINDOW_SIZE[0], y), LINE_WIDTH)
+                    game_over=False
+                    snake=Snake(screen)
+                    food=Food()
+                    score=0
+                    delay=1000
 
-        
-        screen.blit(
-            pygame.font.SysFont(FONT_STYLE, FONT_SIZE).render(f"score: {score}", True, FONT_COLOR),
-            (5, 0)
-        )
 
-        if(game_over):
-            screen.blit(
-                pygame.font.SysFont(FONT_STYLE, 40).render(f"GAME OVER!", True, (200, 30, 30)),
-                ((WINDOW_SIZE[0]-200)>>1, 0)
+        if(delay == 1000 and not game_over):
+            
+            if(
+                snake.body[0] in snake.body[1:] or 
+                snake.body[0][0]<=0 or (snake.body[0][0]+1)*GRID_SIZE>=WINDOW_SIZE[0] or
+                snake.body[0][1]<=0 or (snake.body[0][1]+1)*GRID_SIZE>=WINDOW_SIZE[1]
+            ):
+                game_over=True
+                
+    
+
+            if(game_over):
+                screen.blit(
+                    pygame.font.SysFont(FONT_STYLE, 40).render(f"GAME OVER!", True, (200, 30, 30)),
+                    ((WINDOW_SIZE[0]-200)>>1, 0)
             )
+                continue
+            
+            
+            
+            food.update(screen)
+            if(snake.update(food)):
+                score+=20
+                # 重绘顶部区域
+                screen.fill(game_config['bg_color'], (0, 0, WINDOW_SIZE[0], 2 * GRID_SIZE))
+                screen.blit(
+                    pygame.font.SysFont(FONT_STYLE, FONT_SIZE).render(f"score: {score}", True, FONT_COLOR),
+                    (5, 0)
+                )
         
-        food=Food()
-        # food.gen_pos()
-        food.fill(screen)
-        # food.clean(screen)
-        
-
-        snake=Snake(screen)
-        # snake.draw(screen)
-
-        
-        
-        
-        
+        delay-=0.5
+        delay=1000 if not delay else delay
         
         pygame.display.update()
 

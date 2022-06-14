@@ -1,7 +1,6 @@
 {
     "game":{
-        "window_size":[960,720],
-        "game_speed":20,
+        "window_size":[480,360],
         "bg_color":[40, 40, 60],
         
         "grid":{
