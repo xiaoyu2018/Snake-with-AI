@@ -1,7 +1,7 @@
 import pygame
 from utils import get_game_config
 from enum import Enum
-
+from collections import deque
 game_config=get_game_config()
 
 
@@ -23,12 +23,14 @@ class Snake:
         self.color=(100, 100, 100)
         self.direction=Direction.RIGHT
         self.screen=screen
+        self.length=3
+
         # 存储蛇身体的格子坐标，设置初始值  
-        self.body=[
+        self.body=deque([
             (init_pos[0],init_pos[1]),
             (init_pos[0]-1,init_pos[1]),
             (init_pos[0]-2,init_pos[1]),
-            ]
+            ])
         # 初始化贪吃蛇时，绘制整个蛇身
         for pos in self.body:
             self.fill(screen,pos,self.color)
@@ -63,9 +65,8 @@ class Snake:
         
     def update(self,food):
         # 更新蛇身列表，并重新绘制蛇头和蛇尾格子
-        ... 
         new_head=self.body[0]
-        print(new_head)
+        
         if(self.direction==Direction.UP):
             new_head=(new_head[0],new_head[1]-1)
         elif(self.direction==Direction.DOWN):
@@ -75,8 +76,16 @@ class Snake:
         elif(self.direction==Direction.RIGHT):
             new_head=(new_head[0]+1,new_head[1])
         print(new_head)
-        self.body.insert(0,new_head)
-        self.fill(self.screen,self.body[0],self.color)
+
+        # 绘制前判断是否撞墙或撞自己，如果撞墙或撞自己，则游戏结束
+        if(
+            (new_head in self.body) or 
+            new_head[0]<0 or (new_head[0])*self.size>=self.win_size[0] or
+            new_head[1]<2 or (new_head[1])*self.size>=self.win_size[1]
+            ):
+                return -1
+        self.fill(self.screen,new_head,self.color)
+        self.body.appendleft(new_head)
         
         # 判断蛇是否吃到食物
         if(self.body[0]!=(food.pos_x//self.size,food.pos_y//self.size)):
@@ -84,7 +93,14 @@ class Snake:
             self.body.pop()
             return 0
         
-        else:
+        self.length+=1
+        food.gen_pos()
+        while(food.pos_x//self.size,food.pos_y//self.size) in self.body:
             food.gen_pos()
+        return 1
             
-            return 1
+
+
+if __name__=='__main__':
+    a=deque([1,1,3])
+    print(a[0] in list(a)[1:])

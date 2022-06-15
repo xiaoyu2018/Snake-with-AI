@@ -20,7 +20,9 @@ class Food:
     def gen_pos(self):
         self.pos_x=random.randint(0,self.win_size[0]//self.size-1)*self.size
         self.pos_y=random.randint(2,self.win_size[1]//self.size-1)*self.size
-    
+
+        
+
     def update(self,screen):
         pygame.draw.rect(
             screen,self.color,
