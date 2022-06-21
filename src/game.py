@@ -2,7 +2,7 @@ import pygame
 import sys
 from food import *
 from snake import *
-from algorithms import Astar
+from RL import Astar
 from utils import get_game_config,get_ai_config
 from pygame.locals import *
 
