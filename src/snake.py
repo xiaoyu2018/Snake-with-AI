@@ -77,7 +77,7 @@ class Snake:
             new_head=(new_head[0]-1,new_head[1])
         elif(self.direction==Direction.RIGHT):
             new_head=(new_head[0]+1,new_head[1])
-        print(new_head)
+        # print(new_head)
 
         # 绘制前判断是否撞墙或撞自己，如果撞墙或撞自己，则游戏结束
         if(

@@ -2,7 +2,6 @@ import pygame
 import sys
 from food import *
 from snake import *
-from RL import Astar
 from utils import get_game_config,get_ai_config
 from pygame.locals import *
 
@@ -24,6 +23,7 @@ class Game:
         pygame.display.set_caption('Snake')
         self.reset()
 
+
     def reset(self):
         self.screen = pygame.display.set_mode(WINDOW_SIZE)
         self.screen.fill(game_config['bg_color'])
@@ -35,6 +35,7 @@ class Game:
         self.snake=Snake(self.screen)
         self.food=Food()
         self.score=0
+        
 
     def get_env_info(self):
         ...
@@ -53,6 +54,8 @@ class Game:
 
     def play_step(self,action:Direction=None):
         
+        # 没吃到食物，但也没有游戏结束
+        reward=0
         #------------------------实时绘制------------------------# 
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -77,8 +80,9 @@ class Game:
                     pygame.font.SysFont(FONT_STYLE, 40).render(f"GAME OVER!", True, (200, 30, 30)),
                     ((WINDOW_SIZE[0]-200)>>1, 0)
                 )
-                return
+                reward=-10
 
+            # 吃到食物
             elif(state==1):
                 self.score+=self.snake.length**2
                 # 重绘顶部区域
@@ -87,15 +91,16 @@ class Game:
                     pygame.font.SysFont(FONT_STYLE, FONT_SIZE).render(f"score: {self.score}", True, FONT_COLOR),
                     (5, 0)
                 )
+                reward=5
                 
-            
-    
         pygame.display.update()
+        return reward,self.game_over,self.score    
+        
     
             
 
 if __name__ == '__main__':
     game=Game()
     while True:
-        game.play_step()
+        print(game.play_step())
         pygame.time.delay(150)
