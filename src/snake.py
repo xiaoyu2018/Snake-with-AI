@@ -17,9 +17,11 @@ class Snake:
         self.size=get_game_config()['grid']['size']
         self.win_size=get_game_config()['window_size']
         self.line_width=get_game_config()['grid']['line_width']
+        
         grid_x_count=self.win_size[0]//self.size
         grid_y_count=self.win_size[1]//self.size
         init_pos=(grid_x_count//2-2,grid_y_count//2)
+        
         self.color=(100, 100, 100)
         self.direction=Direction.RIGHT
         self.screen=screen
@@ -88,14 +90,14 @@ class Snake:
         self.body.appendleft(new_head)
         
         # 判断蛇是否吃到食物
-        if(self.body[0]!=(food.pos_x//self.size,food.pos_y//self.size)):
+        if(self.body[0]!=(food.pos_x,food.pos_y)):
             self.fill(self.screen,self.body[-1],game_config['bg_color'])
             self.body.pop()
             return 0
         
         self.length+=1
         food.gen_pos()
-        while(food.pos_x//self.size,food.pos_y//self.size) in self.body:
+        while(food.pos_x,food.pos_y) in self.body:
             food.gen_pos()
         return 1
             

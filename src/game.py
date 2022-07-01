@@ -36,6 +36,9 @@ class Game:
         self.food=Food()
         self.score=0
 
+    def get_env_info(self):
+        ...
+
     def control_by_keyboard(self,event):
         if event.type == KEYDOWN:
             if event.key in (K_w, K_UP):
