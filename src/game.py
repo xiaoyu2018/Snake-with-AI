@@ -63,7 +63,16 @@ class Game:
                     self.control_by_keyboard(event)
                 elif(self.game_over and event.key==K_r):
                     self.reset()
-                    
+                            
+        if(action):
+            if(action==Direction.UP):
+                self.snake.move_up()
+            elif(action==Direction.DOWN):
+                self.snake.move_down()
+            elif(action==Direction.LEFT):
+                self.snake.move_left()
+            elif(action==Direction.RIGHT):
+                self.snake.move_right()
 
         if(not self.game_over):
                 

@@ -1,5 +1,5 @@
 import json
-from enum import Enum
+from enum import IntEnum
 
 def load_json(path:str):
     with open(path, 'r') as f:
@@ -12,11 +12,11 @@ def get_ai_config():
     return load_json('./config.json')['ai']
 
 
-class Direction(Enum):
-    UP = 0
-    DOWN = 1
-    LEFT = 2
-    RIGHT = 3
+class Direction(IntEnum):
+    LEFT = 0
+    UP = 1
+    RIGHT = 2
+    DOWN = 3
 
 
 
@@ -32,5 +32,4 @@ FONT_STYLE=game_config['font']['style']
 GRID_NUM=(WINDOW_SIZE[0]//GRID_SIZE,WINDOW_SIZE[1]//GRID_SIZE)
 
 if __name__=='__main__':
-    # print(GRID_NUM)
-    ...
+    print((-1)%4)
