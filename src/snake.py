@@ -1,15 +1,10 @@
 import pygame
-from utils import get_game_config
-from enum import Enum
+from utils import get_game_config,Direction
 from collections import deque
 game_config=get_game_config()
 
 
-class Direction(Enum):
-    UP = 0
-    DOWN = 1
-    LEFT = 2
-    RIGHT = 3
+
 
 class Snake:
 
@@ -64,6 +59,10 @@ class Snake:
                 0
             )
         
+    def is_danger(self,new_head):
+        return (new_head in self.body) or \
+            new_head[0]<0 or (new_head[0])*self.size>=self.win_size[0] or\
+            new_head[1]<2 or (new_head[1])*self.size>=self.win_size[1]
         
     def update(self,food):
         # 更新蛇身列表，并重新绘制蛇头和蛇尾格子
@@ -80,11 +79,7 @@ class Snake:
         # print(new_head)
 
         # 绘制前判断是否撞墙或撞自己，如果撞墙或撞自己，则游戏结束
-        if(
-            (new_head in self.body) or 
-            new_head[0]<0 or (new_head[0])*self.size>=self.win_size[0] or
-            new_head[1]<2 or (new_head[1])*self.size>=self.win_size[1]
-            ):
+        if(self.is_danger(new_head)):
                 return -1
         self.fill(self.screen,new_head,self.color)
         self.body.appendleft(new_head)

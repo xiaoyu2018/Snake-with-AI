@@ -2,19 +2,11 @@ import pygame
 import sys
 from food import *
 from snake import *
-from utils import get_game_config,get_ai_config
+from utils import *
 from pygame.locals import *
 
 
-game_config=get_game_config()
-#------------------------使用常量获取配置信息------------------------# 
-GRID_SIZE = game_config['grid']['size']
-LINE_WIDTH = game_config['grid']['line_width']
-GRID_COLOR = game_config['grid']['color']
-WINDOW_SIZE = game_config['window_size']
-FONT_SIZE=game_config['font']['size']
-FONT_COLOR=game_config['font']['color']
-FONT_STYLE=game_config['font']['style']
+
 
 class Game:
     def __init__(self) -> None:
@@ -38,8 +30,13 @@ class Game:
         
 
     def get_env_info(self):
-        ...
-
+        info=dict()
+        info['snake_direction']=self.snake.direction
+        info['snake_body']=self.snake.body
+        info['food_pos']=(self.food.pos_x,self.food.pos_y)
+        info['border']=WINDOW_SIZE[0]//GRID_SIZE,WINDOW_SIZE[1]//GRID_SIZE
+        return info
+        
     def control_by_keyboard(self,event):
         if event.type == KEYDOWN:
             if event.key in (K_w, K_UP):
@@ -94,7 +91,7 @@ class Game:
                 reward=5
                 
         pygame.display.update()
-        return reward,self.game_over,self.score    
+        return reward,self.game_over,self.score
         
     
             
@@ -103,4 +100,5 @@ if __name__ == '__main__':
     game=Game()
     while True:
         print(game.play_step())
+        print(game.get_env_info())
         pygame.time.delay(150)

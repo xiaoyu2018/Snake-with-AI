@@ -19,10 +19,11 @@ class LinerNet(nn.Module):
 class DQN(Model):
     def __init__(self):
         super().__init__()
-        self.net = LinerNet(self.game.state_size, self.game.action_size)
+        self.net = LinerNet(9, self.game.action_size)
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=0.001)
         self.loss_func = nn.MSELoss()
-
+        self.gama = 0.9
+        
     def predict(self, state):
         return self.model(state)
 
@@ -38,4 +39,9 @@ class DQN(Model):
         torch.save(self.model.state_dict(), 'dqn.pkl')
 
     def load(self,param_path):
-        self.model.load_state_dict(torch.load(param_path))
+        self.net.load_state_dict(torch.load(param_path))
+
+
+if __name__=='__main__':
+    a=[True,False,True,False]
+    print(torch.tensor(a).float())
