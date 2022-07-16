@@ -14,5 +14,9 @@
             "size":25,
             "color":[255,255,255]
         }
+    
+    },
+    "ai": {
+        "param_path": "D:\\code\\machine_learning\\Snake-with-AI\\dqn.pkl"
     }
 }

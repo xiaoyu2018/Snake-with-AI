@@ -9,7 +9,7 @@ def get_game_config():
     return load_json('./config.json')['game']
 
 def get_ai_config():
-    return load_json('./config.json')['ai']
+    return load_json('./config.json')["ai"]
 
 
 class Direction(IntEnum):
@@ -21,6 +21,7 @@ class Direction(IntEnum):
 
 
 game_config=get_game_config()
+ai_config=get_ai_config()
 #------------------------使用常量获取配置信息------------------------# 
 GRID_SIZE = game_config['grid']['size']
 LINE_WIDTH = game_config['grid']['line_width']
@@ -31,5 +32,8 @@ FONT_COLOR=game_config['font']['color']
 FONT_STYLE=game_config['font']['style']
 GRID_NUM=(WINDOW_SIZE[0]//GRID_SIZE,WINDOW_SIZE[1]//GRID_SIZE)
 
+PARAM_PATH=ai_config['param_path']
 if __name__=='__main__':
-    print((-1)%4)
+    import torch
+    a=torch.tensor([1,2,3])
+    print(torch.argmax(a))

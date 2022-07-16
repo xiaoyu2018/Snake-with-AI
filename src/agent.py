@@ -1,9 +1,10 @@
 from game import Game
-from algorithms.model import Model
-from algorithms.dqn import DQN
+# from algorithms.base import Model
+# from algorithms.dqn import DQN
+from algorithms import *
 import random
 from collections import deque
-from utils import Direction,GRID_NUM
+from utils import Direction,GRID_NUM,PARAM_PATH
 
 class Agent:
 
@@ -14,9 +15,11 @@ class Agent:
         # epsilon贪心策略的概率
         self.epsilon = 200
         # 记录当前游戏轮数
-        self.current_epoch=0
+        self.current_epoch=1
         # 经验池(上限设为500)
-        self.memory=deque(maxlen=500)
+        self.memory=deque(maxlen=800)
+        # 参数保存间隔轮数
+        self.n_save=25
 
     def get_action(self,train=False):
         '''
@@ -25,27 +28,29 @@ class Agent:
         2:右转
         '''
         if(not train):
+            self.model.load(PARAM_PATH)
             self.epsilon=0
-        elif(self.epsilon>0):
-            self.epsilon-=self.current_epoch
+        elif(self.epsilon>50):
+            self.epsilon-=self.current_epoch*0.01
 
         sample=random.randint(0,500)
         cur_dir=int(self.game.snake.direction)
         # 随机选择actoin
         if(sample<self.epsilon):
-            action=random.randint(0,3)
+            action=random.randint(0,2)
 
         # 神经网络选择action
         else:
             action=self.model.predict(self.get_state())
-
+        
+        
         #解析action
         if(action==0):
-            return Direction(cur_dir)
+            return action,Direction(cur_dir)
         elif(action==1):
-            return Direction((cur_dir-1)%4)
+            return action,Direction((cur_dir-1)%4)
         elif(action==2):
-            return Direction((cur_dir+1)%4)
+            return action,Direction((cur_dir+1)%4)
 
     def get_state(self):
         '''
@@ -100,30 +105,59 @@ class Agent:
             (is_left and self.game.snake.is_danger(_get_new_head(info['snake_body'][0],Direction.UP))) or
             (is_right and self.game.snake.is_danger(_get_new_head(info['snake_body'][0],Direction.DOWN))),
         ]
-
-        
-
-
     
     def train_long_memory(self):
-        ...
+        if len(self.memory) != 0:
+            states, actions, rewards, next_states = zip(*(self.memory))
+            self.model.train_step(states, actions, rewards, next_states)
     
-    def train_short_memory(self):
-        ...
+    def train_short_memory(self, state, action, reward, next_state):
+        if reward == 0:
+            if random.randint(1,15) == 1: 
+                self.memory.append([state, action, reward, next_state])
+        else:
+            self.memory.append([state, action, reward, next_state])
+        self.model.train_step([state], [action], [reward], [next_state])
 
+    def train(self):
+        
+        while(True):
+            if not self.current_epoch % self.n_save:
+                    self.model.save()
+            
+
+            state=self.get_state()
+            action=self.get_action(True)
+            print(action)
+            reward,over,score=self.game.play_step(action[1])
+            next_state=self.get_state()
+
+            self.train_short_memory(state,action[0],reward,next_state)
+            self.train_long_memory()
+            print("======================================")
+            print(f'epoch:{self.current_epoch},score:{score}\n')
+            self.current_epoch+=1
+            if(over):
+                self.game.reset()
+            import pygame
+            # pygame.time.delay(1000)
     def auto_play(self):
         import pygame
         while(True):
-            dir=self.get_action(train=False)
+            dir=self.get_action(train=False)[1]
             self.game.play_step(Direction(dir))
             # print(self.get_state())
             pygame.time.delay(250)
 
 if __name__=='__main__':
     agent=Agent(Game(),DQN())
-    # info=agent.game.get_env_info()
-
-    # print(info['food_pos'][0]-info['snake_body'][0][0])
-    # print(GRID_NUM)
-    # print(agent.get_state())
+    # agent.train()
     agent.auto_play()
+    # # info=agent.game.get_env_info()
+
+    # # print(info['food_pos'][0]-info['snake_body'][0][0])
+    # # print(GRID_NUM)
+    # # print(agent.get_state())
+    # agent.auto_play()
+    
+    

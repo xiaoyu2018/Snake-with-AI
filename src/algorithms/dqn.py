@@ -1,6 +1,6 @@
 from torch import nn
-from .model import Model
 import torch
+from .base import Model
 
 class LinerNet(nn.Module):
     def __init__(self, input_size, output_size):
@@ -24,21 +24,35 @@ class DQN(Model):
         self.net = LinerNet(9, 3)
         self.optimizer = torch.optim.Adam(self.net.parameters(), lr=0.001)
         self.loss_func = nn.MSELoss()
-        self.gama = 0.9
+        self.gama = 0.85
         
+
     def predict(self, state):
         state=torch.tensor(state,dtype=torch.float)
         out=self.net(state)
-        print(out)
+        # print(out)
         return torch.argmax(out).item()
 
     def train_step(self, state, action, reward, next_state):
+        """
+        state: 当前状态 2d
+        action: 当前动作 1d
+        reward: 当前奖励 1d
+        next_state: 下一状态 2d
+        """
         state=torch.tensor(state,dtype=torch.float)
         reward=torch.tensor(reward,dtype=torch.float)
+        next_state=torch.tensor(next_state,dtype=torch.float)
+
+        out = self.net(state)
+        label=out.clone()
+        
+        for i in range(len(label)):
+            label[i][action[i]]=reward[i]+self.gama*torch.max(self.net(next_state[i]),0).values.item()
+
 
         self.optimizer.zero_grad()
-        out = self.net(state)
-        loss = self.loss_func(out, reward)
+        loss = self.loss_func(out, label)
         loss.backward()
         self.optimizer.step()
         return loss.item()
@@ -51,5 +65,12 @@ class DQN(Model):
 
 
 if __name__=='__main__':
-    a=torch.tensor([1,2,3,4,5,6,7,8,9,10,11])
-    print(torch.argmax(a).item())
+    # a=torch.tensor([1,2,3,4,5,6,7,8,9])
+    # print(torch.argmax(a).item())
+    net=DQN()
+    print(net.train_step(
+        [[1,2,3,4,5,6,7,8,9],[1,2,3,4,5,6,7,8,9]],
+        [0,1],
+        [1,1],
+        [[1,2,3,4,5,6,7,8,9],[1,2,3,4,5,6,7,8,9]])
+        )

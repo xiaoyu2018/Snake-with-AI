@@ -64,7 +64,7 @@ class Game:
                 elif(self.game_over and event.key==K_r):
                     self.reset()
                             
-        if(action):
+        if(action!=None):
             if(action==Direction.UP):
                 self.snake.move_up()
             elif(action==Direction.DOWN):
@@ -97,7 +97,7 @@ class Game:
                     pygame.font.SysFont(FONT_STYLE, FONT_SIZE).render(f"score: {self.score}", True, FONT_COLOR),
                     (5, 0)
                 )
-                reward=5
+                reward=15
                 
         pygame.display.update()
         return reward,self.game_over,self.score
