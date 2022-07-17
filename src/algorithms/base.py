@@ -1,6 +1,6 @@
 
 '''
-向agent提供估值函数的统一接口
+向agent提供决策算法的统一接口
 '''
 
 class Model:
