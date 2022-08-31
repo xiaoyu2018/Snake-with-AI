@@ -1,3 +1,8 @@
+'''
+智能体：根据环境做出决策的主体，这里就是玩贪吃蛇的主体。
+'''
+
+
 from game import Game
 # from algorithms.base import Model
 # from algorithms.dqn import DQN

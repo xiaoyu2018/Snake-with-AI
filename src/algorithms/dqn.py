@@ -3,7 +3,6 @@
     经典dqn还有两个trick：experience replay和固定Q-target
     experience replay：将每一次行动的环境信息和反馈信息记录到经验池（于agent.py实现）
     固定Q-target：DQN中会有两个结构完全相同但是参数却不同的网络，一个用于预测Q估计（MainNet），一个用于预测Q现实（target），MainNet使用最新的参数，target会使用很久之前的参数
-
 '''
 
 from torch import nn
@@ -11,7 +10,10 @@ import torch
 from .base import Model
 
 class LinerNet(nn.Module):
-    '''输入神经元个数即状态，输出神经元即设置的action个数，数值含义为在当前状态下做出某个action将会获得的reward'''
+    '''
+    输入神经元个数即状态，输出神经元即设置的action个数，数值含义为在当前状态下做出某个action将会获得的value。
+    value可看作长期reward。reward仅与单步决策相关，而value考虑的更加长远。
+    '''
     def __init__(self, input_size, output_size):
         super(LinerNet, self).__init__()
         self.fc1 = nn.Linear(input_size, 128)
