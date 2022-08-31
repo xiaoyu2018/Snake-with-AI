@@ -1,5 +1,5 @@
 '''
-    dqn--深度Q网络（Q-learning+神经网络）
+    dqn--深度Q网络（Q-learning+神经网络），神经网络代替了Q-learning中的QTable，就是把QTable中离散的数据拟合成一个神经网络（多元函数）
     经典dqn还有两个trick：experience replay和固定Q-target
     experience replay：将每一次行动的环境信息和反馈信息记录到经验池（于agent.py实现）
     固定Q-target：DQN中会有两个结构完全相同但是参数却不同的网络，一个用于预测Q估计（MainNet），一个用于预测Q现实（target），MainNet使用最新的参数，target会使用很久之前的参数
