@@ -59,7 +59,7 @@ class Game:
                 pygame.quit()
                 sys.exit()
             elif event.type == KEYDOWN:
-                if not action and event.key in (K_w, K_UP,K_s, K_DOWN,K_a, K_LEFT,K_d, K_RIGHT):
+                if action==None and event.key in (K_w, K_UP,K_s, K_DOWN,K_a, K_LEFT,K_d, K_RIGHT):
                     self.control_by_keyboard(event)
                 elif(self.game_over and event.key==K_r):
                     self.reset()
