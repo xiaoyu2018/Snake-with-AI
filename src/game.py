@@ -52,7 +52,7 @@ class Game:
     def play_step(self,action:Direction=None):
         
         # 没吃到食物，但也没有游戏结束
-        reward=0
+        reward=-1
         #------------------------实时绘制------------------------# 
         for event in pygame.event.get():
             if event.type == QUIT:
